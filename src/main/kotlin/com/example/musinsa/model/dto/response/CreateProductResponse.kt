@@ -4,6 +4,8 @@ import com.example.musinsa.model.enums.CategoryType
 import io.swagger.v3.oas.annotations.media.Schema
 
 data class CreateProductResponse(
+    @Schema(description = "상품 ID", example = "1")
+    val id: Long,
     @Schema(description = "브랜드", example = "A")
     val brand: String,
     @Schema(description = "카테고리", example = "상의")

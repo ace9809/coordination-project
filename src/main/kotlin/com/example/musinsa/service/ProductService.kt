@@ -5,6 +5,7 @@ import com.example.musinsa.exception.ProductError
 import com.example.musinsa.exception.ProductException
 import com.example.musinsa.model.dto.request.CreateProductRequest
 import com.example.musinsa.model.dto.response.CreateProductResponse
+import com.example.musinsa.model.dto.response.DeleteProductResponse
 import com.example.musinsa.model.enums.CategoryType
 import org.springframework.stereotype.Service
 
@@ -20,15 +21,23 @@ class ProductService(
         CategoryType.fromDisplayName(createProductRequest.category.displayName)
             ?: throw ProductException(ProductError.INVALID_CATEGORY_EXCEPTION)
 
-
+        val existsProduct = productDomainService.existsByCategoryAndBrand(createProductRequest.category, createProductRequest.brand)
+        if (existsProduct) throw ProductException(ProductError.DUPLICATE_PRODUCT_EXCEPTION)
 
         val product = productDomainService.save(createProductRequest.toProductDto())
         return CreateProductResponse(
+            id = product.id,
             brand = product.brand,
             category = product.category,
             price = product.price
         )
     }
 
-
+    fun deleteProduct(productId: Long): DeleteProductResponse {
+        val product = productDomainService.getProduct(productId) ?: throw ProductException(ProductError.NOT_FOUND_PRODUCT_EXCEPTION)
+        val deleteProduct = productDomainService.deleteProduct(product)
+        return DeleteProductResponse(
+            productId = deleteProduct.id
+        )
+    }
 }
