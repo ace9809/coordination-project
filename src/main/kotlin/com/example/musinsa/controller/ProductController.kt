@@ -2,10 +2,10 @@ package com.example.musinsa.controller
 
 import com.example.musinsa.model.Response
 import com.example.musinsa.model.dto.request.CreateProductRequest
-import com.example.musinsa.model.dto.request.ProductRequest
+import com.example.musinsa.model.dto.request.UpdateProductRequest
 import com.example.musinsa.model.dto.response.CreateProductResponse
 import com.example.musinsa.model.dto.response.DeleteProductResponse
-import com.example.musinsa.projection.repository.ProductRepository
+import com.example.musinsa.model.dto.response.UpdateProductResponse
 import com.example.musinsa.service.ProductService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -20,9 +20,18 @@ class ProductController(
     @Operation(summary = "상품 생성 API")
     @PostMapping
     fun createProduct(
-        @RequestBody createProductRequest: CreateProductRequest,
+        @RequestBody createProductRequest: CreateProductRequest
     ): Response<CreateProductResponse> {
         return Response(true, productService.createProduct(createProductRequest))
+    }
+
+    @Operation(summary = "상품 수정 API")
+    @PutMapping("/{productId}")
+    fun updateProduct
+        @PathVariable productId: Long,
+        @RequestBody updateProductRequest: UpdateProductRequest
+    ): Response<UpdateProductResponse> {
+        return Response(true, productService.updateProduct(productId, updateProductRequest))
     }
 
     @Operation(summary = "상품 삭제 API")
