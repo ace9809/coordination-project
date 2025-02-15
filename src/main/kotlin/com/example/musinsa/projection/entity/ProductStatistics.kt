@@ -1,12 +1,14 @@
 package com.example.musinsa.projection.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "product_statistics")
 data class ProductStatistics(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long = 0L,
+
     @Column(name = "category", columnDefinition = "varchar(25) not null")
     val category: String,
 

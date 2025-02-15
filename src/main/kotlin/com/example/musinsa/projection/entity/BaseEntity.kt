@@ -18,8 +18,4 @@ open class BaseEntity(
     @UpdateTimestamp
     @Column(columnDefinition = "DATETIME(6) null comment '변경일자'")
     var updatedAt: LocalDateTime? = null
-) {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long = 0L
-}
+)

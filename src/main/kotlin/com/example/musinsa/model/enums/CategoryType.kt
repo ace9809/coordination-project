@@ -8,5 +8,11 @@ enum class CategoryType(val displayName: String) {
     BAG("가방"),
     HAT("모자"),
     SOCKS("양말"),
-    ACCESSORY("액세서리")
+    ACCESSORY("액세서리");
+
+    companion object {
+        fun fromDisplayName(displayName: String): CategoryType? {
+            return entries.find { it.displayName == displayName }
+        }
+    }
 }

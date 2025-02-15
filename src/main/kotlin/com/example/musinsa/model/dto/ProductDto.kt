@@ -20,13 +20,12 @@ data class ProductDto(
         }
     }
 
-    fun toProduct(productDto: ProductDto): Product {
+    fun toProduct(): Product {
         return Product(
-            category = productDto.category,
-            brand = productDto.brand,
-            price = productDto.price
-        ).apply {
-            id = this@ProductDto.id
-        }
+            id = id,
+            category = category,
+            brand = brand,
+            price = price
+        )
     }
 }
