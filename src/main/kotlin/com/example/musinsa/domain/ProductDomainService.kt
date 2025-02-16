@@ -1,12 +1,8 @@
 package com.example.musinsa.domain
 
-import com.example.musinsa.exception.ProductError
-import com.example.musinsa.exception.ProductException
 import com.example.musinsa.model.dto.ProductDto
 import com.example.musinsa.model.enums.CategoryType
-import com.example.musinsa.projection.entity.Product
 import com.example.musinsa.projection.repository.ProductRepository
-import jdk.jfr.Category
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 

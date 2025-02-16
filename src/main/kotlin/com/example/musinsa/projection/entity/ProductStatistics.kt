@@ -1,5 +1,6 @@
 package com.example.musinsa.projection.entity
 
+import com.example.musinsa.model.enums.CategoryType
 import jakarta.persistence.*
 
 @Entity
@@ -9,8 +10,9 @@ data class ProductStatistics(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L,
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "category", columnDefinition = "varchar(25) not null")
-    val category: String,
+    val category: CategoryType,
 
     @Column(name = "min_brand", columnDefinition = "varchar(25) not null")
     val minBrand: String,
@@ -22,8 +24,5 @@ data class ProductStatistics(
     val maxBrand: String,
 
     @Column(name = "max_price")
-    val maxPrice: Long,
-
-    @Column(name = "total_price")
-    val totalPrice: Long,
+    val maxPrice: Long
 ) : BaseEntity()

@@ -4,7 +4,7 @@ import com.example.musinsa.model.enums.CategoryType
 import com.example.musinsa.projection.entity.Product
 
 data class ProductDto(
-    var id: Long = 0L,
+    val id: Long = 0L,
     val category: CategoryType,
     val brand: String,
     val price: Long

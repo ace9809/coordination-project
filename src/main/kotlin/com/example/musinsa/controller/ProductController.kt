@@ -17,6 +17,19 @@ import org.springframework.web.bind.annotation.*
 class ProductController(
     private val productService: ProductService
 ) {
+    @Operation(summary = "카테고리별 최저가격 브랜드의 상품 조회 API")
+    @GetMapping("/categories/lowest-price")
+    fun getLowestPriceByCategories() {
+
+    }
+
+//    @Operation(summary = "최저가 브랜드의 모든 카테고리 상품 가격 및 총액 조회 API")
+//    @DeleteMapping("/brands/lowest-total")
+//    fun getBrandWitLowestTotal()
+//
+//    @GetMapping("/categories/min-max-brands")
+//    fun getMinMaxPriceBrand()
+
     @Operation(summary = "상품 생성 API")
     @PostMapping
     fun createProduct(
@@ -27,7 +40,7 @@ class ProductController(
 
     @Operation(summary = "상품 수정 API")
     @PutMapping("/{productId}")
-    fun updateProduct
+    fun updateProduct(
         @PathVariable productId: Long,
         @RequestBody updateProductRequest: UpdateProductRequest
     ): Response<UpdateProductResponse> {

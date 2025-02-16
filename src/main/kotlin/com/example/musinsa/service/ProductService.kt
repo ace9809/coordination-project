@@ -3,18 +3,29 @@ package com.example.musinsa.service
 import com.example.musinsa.domain.ProductDomainService
 import com.example.musinsa.exception.ProductError
 import com.example.musinsa.exception.ProductException
+import com.example.musinsa.model.dto.ProductEventDto
 import com.example.musinsa.model.dto.request.CreateProductRequest
 import com.example.musinsa.model.dto.request.UpdateProductRequest
 import com.example.musinsa.model.dto.response.CreateProductResponse
 import com.example.musinsa.model.dto.response.DeleteProductResponse
 import com.example.musinsa.model.dto.response.UpdateProductResponse
 import com.example.musinsa.model.enums.CategoryType
+import com.example.musinsa.model.enums.ProductEventType
+import jakarta.transaction.Transactional
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
 class ProductService(
-    private val productDomainService: ProductDomainService
+    private val productDomainService: ProductDomainService,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
+    fun getLowestPriceByCategories() {
+
+    }
+
+
+    @Transactional
     fun createProduct(saveProductRequest: CreateProductRequest): CreateProductResponse {
         if (saveProductRequest.price < 0) {
             throw ProductException(ProductError.INVALID_PRICE_EXCEPTION)
@@ -27,6 +38,7 @@ class ProductService(
         if (existsProduct) throw ProductException(ProductError.DUPLICATE_PRODUCT_EXCEPTION)
 
         val product = productDomainService.save(saveProductRequest.toProductDto())
+        applicationEventPublisher.publishEvent(ProductEventDto(product, ProductEventType.CREATE))
         return CreateProductResponse(
             id = product.id,
             brand = product.brand,
@@ -35,6 +47,7 @@ class ProductService(
         )
     }
 
+    @Transactional
     fun updateProduct(productId: Long, updateProductRequest: UpdateProductRequest): UpdateProductResponse {
         productDomainService.getProduct(productId) ?: throw ProductException(ProductError.NOT_FOUND_PRODUCT_EXCEPTION)
 
@@ -57,6 +70,7 @@ class ProductService(
         )
     }
 
+    @Transactional
     fun deleteProduct(productId: Long): DeleteProductResponse {
         val product = productDomainService.getProduct(productId) ?: throw ProductException(ProductError.NOT_FOUND_PRODUCT_EXCEPTION)
         val deleteProduct = productDomainService.deleteProduct(product)
