@@ -27,7 +27,7 @@ class SpringDocOpenApiConfig {
             )
             .info(
                 Info()
-                    .title("Community API")
+                    .title("Musinsa API")
                     .version("1.0.0")
                     .description("무신사 과제 REST API 입니다.")
             )
