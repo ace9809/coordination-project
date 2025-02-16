@@ -1,6 +1,7 @@
 package com.example.musinsa.domain
 
 import com.example.musinsa.model.dto.BrandDto
+import com.example.musinsa.projection.entity.Brand
 import com.example.musinsa.projection.repository.BrandRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -12,6 +13,11 @@ class BrandDomainService(
     fun getBrand(brandId: Long): BrandDto? {
         val brand = brandRepository.findByIdOrNull(brandId) ?: return null
         return BrandDto.of(brand)
+    }
+
+    fun getBrandIdIn(brandIds: List<Long>) : List<BrandDto> {
+        val brands = brandRepository.findBrandIdIn(brandIds)
+        return brands.map { BrandDto.of(it) }
     }
 
     fun save(brandDto: BrandDto): BrandDto {

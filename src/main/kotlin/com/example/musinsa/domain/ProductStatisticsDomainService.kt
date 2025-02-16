@@ -18,7 +18,16 @@ class ProductStatisticsDomainService(
         return ProductStatisticsDto.of(productStatistics)
     }
 
+    fun getAllProductStatistics(): List<ProductStatisticsDto> {
+        val productStatistics = productStatisticsRepository.findAll()
+        return productStatistics.map { ProductStatisticsDto.of(it) }
+    }
+
     fun save(productStatisticsDto: ProductStatisticsDto): ProductStatisticsDto {
         return ProductStatisticsDto.of(productStatisticsRepository.save(productStatisticsDto.toProductStatistics()))
+    }
+
+    fun deleteProductStatistics(productStatisticsId: Long) {
+        productStatisticsRepository.deleteById(productStatisticsId)
     }
 }

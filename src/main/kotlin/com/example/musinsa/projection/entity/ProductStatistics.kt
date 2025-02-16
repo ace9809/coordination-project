@@ -11,17 +11,23 @@ data class ProductStatistics(
     var id: Long = 0L,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "category", columnDefinition = "varchar(25) not null")
+    @Column(name = "category")
     val category: CategoryType,
 
-    @Column(name = "min_brand", columnDefinition = "varchar(25) not null")
-    val minBrand: String,
+    @Column(name = "min_brand_id")
+    val minBrandId: Long,
+
+    @Column(name = "min_product_id")
+    val minProductId: Long,
 
     @Column(name = "min_price")
     val minPrice: Long,
 
-    @Column(name = "max_brand", columnDefinition = "varchar(25) not null")
-    val maxBrand: String,
+    @Column(name = "max_brand_id")
+    val maxBrandId: Long,
+
+    @Column(name = "max_product_id")
+    val maxProductId: Long,
 
     @Column(name = "max_price")
     val maxPrice: Long

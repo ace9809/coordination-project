@@ -8,4 +8,8 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ProductRepository: JpaRepository<Product, Long> {
     fun existsByCategoryAndBrandId(category: CategoryType, brandId: Long): Boolean
+
+    fun findTopByCategoryOrderByPriceDesc(category: CategoryType): Product?
+
+    fun findTopByCategoryOrderByPriceAsc(category: CategoryType): Product?
 }

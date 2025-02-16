@@ -8,8 +8,8 @@ import com.example.musinsa.model.dto.request.brand.UpdateBrandRequest
 import com.example.musinsa.model.dto.response.brand.CreateBrandResponse
 import com.example.musinsa.model.dto.response.brand.UpdateBrandResponse
 import com.example.musinsa.model.dto.response.product.DeleteProductResponse
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BrandService(

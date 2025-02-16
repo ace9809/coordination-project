@@ -25,7 +25,16 @@ class ProductDomainService(
 
     fun deleteProduct(productId: Long): Long {
         productRepository.deleteById(productId)
-
         return productId
+    }
+
+    fun getMostExpensiveProductByCategory(category: CategoryType): ProductDto? {
+        val product = productRepository.findTopByCategoryOrderByPriceDesc(category) ?: return null
+        return ProductDto.of(product)
+    }
+
+    fun getCheapestProductByCategory(category: CategoryType): ProductDto? {
+        val product = productRepository.findTopByCategoryOrderByPriceAsc(category) ?: return null
+        return ProductDto.of(product)
     }
 }

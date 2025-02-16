@@ -3,9 +3,7 @@ package com.example.musinsa.controller
 import com.example.musinsa.model.Response
 import com.example.musinsa.model.dto.request.product.CreateProductRequest
 import com.example.musinsa.model.dto.request.product.UpdateProductRequest
-import com.example.musinsa.model.dto.response.product.CreateProductResponse
-import com.example.musinsa.model.dto.response.product.DeleteProductResponse
-import com.example.musinsa.model.dto.response.product.UpdateProductResponse
+import com.example.musinsa.model.dto.response.product.*
 import com.example.musinsa.service.ProductService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -19,8 +17,8 @@ class ProductController(
 ) {
     @Operation(summary = "카테고리별 최저가격 브랜드의 상품 조회 API")
     @GetMapping("/categories/lowest-price")
-    fun getLowestPriceByCategories() {
-
+    fun getLowestPriceByCategories(): Response<GetLowestPriceByCategoriesResponses> {
+        return Response(true, productService.getLowestPriceByCategories())
     }
 
 //    @Operation(summary = "최저가 브랜드의 모든 카테고리 상품 가격 및 총액 조회 API")

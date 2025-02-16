@@ -6,9 +6,11 @@ import com.example.musinsa.projection.entity.ProductStatistics
 data class ProductStatisticsDto(
     val id: Long = 0L,
     val category: CategoryType,
-    val minBrand: String,
+    val minBrandId: Long,
+    val minProductId: Long,
     val minPrice: Long,
-    val maxBrand: String,
+    val maxBrandId: Long,
+    val maxProductId: Long,
     val maxPrice: Long
 ) {
     companion object {
@@ -16,10 +18,12 @@ data class ProductStatisticsDto(
             return ProductStatisticsDto(
                 id = productStatistics.id,
                 category = productStatistics.category,
-                minBrand = productStatistics.minBrand,
+                minBrandId = productStatistics.minBrandId,
                 minPrice = productStatistics.minPrice,
-                maxBrand = productStatistics.maxBrand,
-                maxPrice = productStatistics.maxPrice
+                minProductId = productStatistics.minProductId,
+                maxBrandId = productStatistics.maxBrandId,
+                maxPrice = productStatistics.maxPrice,
+                maxProductId = productStatistics.maxProductId
             )
         }
     }
@@ -28,10 +32,12 @@ data class ProductStatisticsDto(
         return ProductStatistics(
             id = id,
             category = category,
-            minBrand = minBrand,
+            minBrandId = minBrandId,
             minPrice = minPrice,
-            maxBrand = maxBrand,
-            maxPrice = maxPrice
+            minProductId = minProductId,
+            maxBrandId = maxBrandId,
+            maxPrice = maxPrice,
+            maxProductId = maxProductId,
         )
     }
 }

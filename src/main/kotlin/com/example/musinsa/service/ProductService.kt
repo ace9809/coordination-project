@@ -2,6 +2,7 @@ package com.example.musinsa.service
 
 import com.example.musinsa.domain.BrandDomainService
 import com.example.musinsa.domain.ProductDomainService
+import com.example.musinsa.domain.ProductStatisticsDomainService
 import com.example.musinsa.exception.BrandError
 import com.example.musinsa.exception.BrandException
 import com.example.musinsa.exception.ProductError
@@ -9,21 +10,38 @@ import com.example.musinsa.exception.ProductException
 import com.example.musinsa.model.dto.ProductEventDto
 import com.example.musinsa.model.dto.request.product.CreateProductRequest
 import com.example.musinsa.model.dto.request.product.UpdateProductRequest
-import com.example.musinsa.model.dto.response.product.CreateProductResponse
-import com.example.musinsa.model.dto.response.product.DeleteProductResponse
-import com.example.musinsa.model.dto.response.product.UpdateProductResponse
+import com.example.musinsa.model.dto.response.product.*
 import com.example.musinsa.model.enums.CategoryType
 import com.example.musinsa.model.enums.ProductEventType
-import jakarta.transaction.Transactional
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ProductService(
     private val productDomainService: ProductDomainService,
+    private val productStatisticsDomainService: ProductStatisticsDomainService,
     private val brandDomainService: BrandDomainService,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
+    @Transactional(readOnly = true)
+    fun getLowestPriceByCategories(): GetLowestPriceByCategoriesResponses{
+        val productStatistics = productStatisticsDomainService.getAllProductStatistics()
+        val brandIds = productStatistics.map { it.minBrandId }
+        val brandMap = brandDomainService.getBrandIdIn(brandIds).associateBy { it.id }
+        return GetLowestPriceByCategoriesResponses(
+            products = productStatistics.map {
+                GetLowestPriceByCategoriesResponse(
+                    brandId = it.minBrandId,
+                    brandName = brandMap[it.minBrandId]!!.name,
+                    category = it.category,
+                    price = it.minPrice
+                )
+            },
+            totalPrice = productStatistics.sumOf { it.minPrice }
+        )
+    }
+
     @Transactional
     fun createProduct(createProductRequest: CreateProductRequest): CreateProductResponse {
         if (createProductRequest.price < 0) {
