@@ -1,6 +1,6 @@
 spring:
   application:
-    name: community-api
+    name: musinsa-api
   jpa:
     hibernate:
       naming:
@@ -42,3 +42,9 @@ spring:
 #      password:
 #      schema-locations: classpath*:db/schema.sql
 #      data-locations: classpath*:db/data.sql
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    tags-sorter: alpha
+  paths-to-match: /api/**
