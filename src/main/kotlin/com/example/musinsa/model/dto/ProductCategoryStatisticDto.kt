@@ -3,7 +3,7 @@ package com.example.musinsa.model.dto
 import com.example.musinsa.model.enums.CategoryType
 import com.example.musinsa.projection.entity.ProductStatistics
 
-data class ProductStatisticsDto(
+data class ProductCategoryStatisticDto(
     val id: Long = 0L,
     val category: CategoryType,
     val minBrandId: Long,
@@ -14,8 +14,8 @@ data class ProductStatisticsDto(
     val maxPrice: Long
 ) {
     companion object {
-        fun of(productStatistics: ProductStatistics): ProductStatisticsDto {
-            return ProductStatisticsDto(
+        fun of(productStatistics: ProductStatistics): ProductCategoryStatisticDto {
+            return ProductCategoryStatisticDto(
                 id = productStatistics.id,
                 category = productStatistics.category,
                 minBrandId = productStatistics.minBrandId,

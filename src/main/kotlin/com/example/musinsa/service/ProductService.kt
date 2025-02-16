@@ -2,7 +2,7 @@ package com.example.musinsa.service
 
 import com.example.musinsa.domain.BrandDomainService
 import com.example.musinsa.domain.ProductDomainService
-import com.example.musinsa.domain.ProductStatisticsDomainService
+import com.example.musinsa.domain.ProductCategoryStatisticDomainService
 import com.example.musinsa.exception.*
 import com.example.musinsa.model.dto.ProductEventDto
 import com.example.musinsa.model.dto.request.product.CreateProductRequest
@@ -17,13 +17,13 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class ProductService(
     private val productDomainService: ProductDomainService,
-    private val productStatisticsDomainService: ProductStatisticsDomainService,
+    private val productCategoryStatisticDomainService: ProductCategoryStatisticDomainService,
     private val brandDomainService: BrandDomainService,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
     @Transactional(readOnly = true)
     fun getCategoryLowesPrices(): GetCategoryLowesPricesResponses {
-        val productStatistics = productStatisticsDomainService.getAllProductStatistics()
+        val productStatistics = productCategoryStatisticDomainService.getAllProductStatistics()
         val brandIds = productStatistics.map { it.minBrandId }
         val brandMap = brandDomainService.getBrandIdIn(brandIds).associateBy { it.id }
         return GetCategoryLowesPricesResponses(
@@ -44,8 +44,8 @@ class ProductService(
         CategoryType.fromDisplayName(category.displayName)
             ?: throw ProductException(ProductError.INVALID_CATEGORY_EXCEPTION)
         val productStatistics =
-            productStatisticsDomainService.getProductStatistics(category) ?: throw ProductStatisticsException(
-                ProductStatisticsError.NOT_FOUND_PRODUCT_STATISTICS_EXCEPTION
+            productCategoryStatisticDomainService.getProductStatistics(category) ?: throw ProductCategoryStatisticException(
+                ProductCategoryStatisticError.NOT_FOUND_PRODUCT_STATISTICS_EXCEPTION
             )
         val brandIds = listOf(productStatistics.minBrandId, productStatistics.maxBrandId)
         val brandMap = brandDomainService.getBrandIdIn(brandIds).associateBy { it.id }

@@ -6,4 +6,4 @@ open class MusinsaRuntimeException(val code:String?, val statusCode: HttpStatus,
 
 class ProductException(productError: ProductError): MusinsaRuntimeException(productError.code, productError.httpStatus, productError.message)
 class BrandException(brandError: BrandError): MusinsaRuntimeException(brandError.code, brandError.httpStatus, brandError.message)
-class ProductStatisticsException(productStatisticsError: ProductStatisticsError): MusinsaRuntimeException(productStatisticsError.code, productStatisticsError.httpStatus, productStatisticsError.message)
+class ProductCategoryStatisticException(productCategoryStatisticError: ProductCategoryStatisticError): MusinsaRuntimeException(productCategoryStatisticError.code, productCategoryStatisticError.httpStatus, productCategoryStatisticError.message)

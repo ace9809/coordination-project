@@ -4,8 +4,8 @@ import com.example.musinsa.model.enums.CategoryType
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "product_statistics")
-data class ProductStatistics(
+@Table(name = "product_category_statistics")
+data class ProductCategoryStatistic(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L,
