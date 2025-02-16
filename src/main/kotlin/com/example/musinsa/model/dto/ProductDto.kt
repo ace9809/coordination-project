@@ -6,7 +6,7 @@ import com.example.musinsa.projection.entity.Product
 data class ProductDto(
     val id: Long = 0L,
     val category: CategoryType,
-    val brand: String,
+    val brandId: Long,
     val price: Long
 ) {
     companion object {
@@ -14,7 +14,7 @@ data class ProductDto(
             return ProductDto(
                 id = product.id,
                 category = product.category,
-                brand = product.brand,
+                brandId = product.brandId,
                 price = product.price
             )
         }
@@ -24,7 +24,7 @@ data class ProductDto(
         return Product(
             id = id,
             category = category,
-            brand = brand,
+            brandId = brandId,
             price = price
         )
     }

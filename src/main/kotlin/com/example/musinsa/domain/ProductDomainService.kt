@@ -19,13 +19,13 @@ class ProductDomainService(
         return ProductDto.of(productRepository.save(productDto.toProduct()))
     }
 
-    fun existsByCategoryAndBrand(category: CategoryType, brand: String): Boolean {
-        return productRepository.existsByCategoryAndBrand(category.name, brand)
+    fun existsByCategoryAndBrandId(category: CategoryType, brandId: Long): Boolean {
+        return productRepository.existsByCategoryAndBrandId(category, brandId)
     }
 
-    fun deleteProduct(productDto: ProductDto): ProductDto {
-        productRepository.deleteById(productDto.id)
+    fun deleteProduct(productId: Long): Long {
+        productRepository.deleteById(productId)
 
-        return productDto
+        return productId
     }
 }

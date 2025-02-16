@@ -1,8 +1,8 @@
-package com.example.musinsa.model.dto.response
+package com.example.musinsa.model.dto.response.product
 
 import io.swagger.v3.oas.annotations.media.Schema
 
 data class DeleteProductResponse(
-    @Schema(description = "브랜드", example = "A")
+    @Schema(description = "상품 ID", example = "1")
     val productId: Long
 )

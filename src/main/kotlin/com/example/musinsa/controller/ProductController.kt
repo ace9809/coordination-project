@@ -1,11 +1,11 @@
 package com.example.musinsa.controller
 
 import com.example.musinsa.model.Response
-import com.example.musinsa.model.dto.request.CreateProductRequest
-import com.example.musinsa.model.dto.request.UpdateProductRequest
-import com.example.musinsa.model.dto.response.CreateProductResponse
-import com.example.musinsa.model.dto.response.DeleteProductResponse
-import com.example.musinsa.model.dto.response.UpdateProductResponse
+import com.example.musinsa.model.dto.request.product.CreateProductRequest
+import com.example.musinsa.model.dto.request.product.UpdateProductRequest
+import com.example.musinsa.model.dto.response.product.CreateProductResponse
+import com.example.musinsa.model.dto.response.product.DeleteProductResponse
+import com.example.musinsa.model.dto.response.product.UpdateProductResponse
 import com.example.musinsa.service.ProductService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag

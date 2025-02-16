@@ -11,12 +11,12 @@ data class Product(
     var id: Long = 0L,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "category", columnDefinition = "varchar(25) not null")
+    @Column(name = "category")
     val category: CategoryType,
 
-    @Column(name = "brand", columnDefinition = "varchar(25) not null")
-    val brand: String,
+    @Column(name = "brand_id")
+    val brandId: Long,
 
-    @Column(name = "price",columnDefinition = "varchar(25) not null")
+    @Column(name = "price")
     val price: Long
 ) : BaseEntity()
