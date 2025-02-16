@@ -3,7 +3,7 @@ package com.example.musinsa.model.dto.response.product
 import com.example.musinsa.model.enums.CategoryType
 import io.swagger.v3.oas.annotations.media.Schema
 
-data class GetLowestPriceByCategoriesResponse(
+data class GetCategoryLowesPricesResponse(
     @Schema(description = "브랜드 이름", example = "A")
     val brandName: String,
     @Schema(description = "브랜드 ID", example = "1")
