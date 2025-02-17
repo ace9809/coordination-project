@@ -76,7 +76,8 @@ class ProductServiceTest : BehaviorSpec({
                 GetCategoryMinPricesResponse(
                     brandId = it.minBrandId,
                     brandName = brandDto.name,
-                    category = it.category,
+                    category = it.category.name,
+                    categoryName = it.category.displayName,
                     price = it.minPrice
                 )
             },
@@ -112,7 +113,8 @@ class ProductServiceTest : BehaviorSpec({
                 brandName = brandDto.name,
                 categories = products.map {
                     GetCategoriesResponse(
-                        category = it.category,
+                        category = it.category.name,
+                        categoryName = it.category.displayName,
                         price = it.price
                     )
                 },
@@ -178,7 +180,8 @@ class ProductServiceTest : BehaviorSpec({
         every { productCategoryStatisticDomainService.getProductStatistic(category) } returns productCategoryStatistic
         every { brandDomainService.getBrandIdIn(listOf(minBrandDto.id, maxBrandDto.id)) } returns listOf(maxBrandDto, minBrandDto)
         val getCategoryMinPricesResponses = GetMinMaxPriceResponses(
-            category = productCategoryStatistic.category,
+            category = productCategoryStatistic.category.name,
+            categoryName = productCategoryStatistic.category.displayName,
             minProduct = GetMinMaxPriceResponse(
                 brandName = minBrandDto.name,
                 price = productCategoryStatistic.minPrice
@@ -190,7 +193,7 @@ class ProductServiceTest : BehaviorSpec({
         )
 
         `when`("카테고리 이름으로 최저, 최고 가격 브랜드와 상품 가격을 조회하는 경우") {
-            val response = sut.getMinMaxPrice(category = category)
+            val response = sut.getMinMaxPrice(category = category.name)
 
             then("정상적으로 조회되어야 한다") {
                 response shouldBe getCategoryMinPricesResponses
@@ -203,7 +206,7 @@ class ProductServiceTest : BehaviorSpec({
 
         `when`("잘못된 카테고리 이름으로 조회하면") {
             val exception = shouldThrow<ProductException> {
-                sut.getMinMaxPrice(CategoryType.fromDisplayName(invalidCategoryName) ?: throw ProductException(ProductError.INVALID_CATEGORY_EXCEPTION))
+                sut.getMinMaxPrice(invalidCategoryName)
             }
             then("예외가 발생해야 한다.") {
                 exception.message shouldBe "잘못된 카테고리입니다."
@@ -217,7 +220,7 @@ class ProductServiceTest : BehaviorSpec({
 
         `when`("카테고리 통계를 조회하면") {
             val exception = shouldThrow<ProductCategoryStatisticException> {
-                sut.getMinMaxPrice(category)
+                sut.getMinMaxPrice(category = category.name)
             }
             then("ProductCategoryStatisticException이 발생해야 한다") {
                 exception.message shouldBe "상품 최저가/최고가 정보가 존재하지 않습니다."
@@ -228,7 +231,7 @@ class ProductServiceTest : BehaviorSpec({
     given("상품을 생성하는 경우") {
         val brandDto = BrandFixture.generate(id = 1, name = "A")
         val category = CategoryType.TOP
-        val createProductRequest = CreateProductRequest(category = category.displayName, brandId = brandDto.id, price = 5000)
+        val createProductRequest = CreateProductRequest(category = category.name, brandId = brandDto.id, price = 5000)
         val productDto = ProductFixture.generate(category = category, brandId = brandDto.id, price = 5000)
         val createdProductDto = productDto.copy(id = productDto.id)
         val productEventDto = ProductEventFixture.generate(productDto, ProductEventType.CREATE)
@@ -307,7 +310,7 @@ class ProductServiceTest : BehaviorSpec({
         val brandDto = BrandFixture.generate(id = 1, name = "A")
         val category = CategoryType.TOP
         val existingProductDto = ProductFixture.generate(id = 1, category = category, brandId = brandDto.id, price = 5000)
-        val updateProductRequest = UpdateProductRequest(category = category.displayName, brandId = brandDto.id, price = 6000)
+        val updateProductRequest = UpdateProductRequest(category = category.name, brandId = brandDto.id, price = 6000)
         val updatedProductDto = existingProductDto.copy(price = 6000)
         val productEventDto = ProductEventFixture.generate(updatedProductDto, ProductEventType.UPDATE)
 

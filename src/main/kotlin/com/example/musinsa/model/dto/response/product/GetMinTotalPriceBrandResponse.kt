@@ -1,6 +1,5 @@
 package com.example.musinsa.model.dto.response.product
 
-import com.example.musinsa.model.enums.CategoryType
 import io.swagger.v3.oas.annotations.media.Schema
 
 data class GetMinTotalPriceBrandResponse(
@@ -13,9 +12,10 @@ data class GetMinTotalPriceBrandResponse(
 )
 
 data class GetCategoriesResponse(
-    @Schema(description = "카테고리", example = "상의")
-    val category: CategoryType,
-
+    @Schema(description = "카테고리 타입", example = "TOP")
+    val category: String,
+    @Schema(description = "카테고리 이름", example = "상의")
+    val categoryName: String,
     @Schema(description = "가격", example = "1000")
     val price: Long
 )

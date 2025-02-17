@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 data class UpdateProductRequest(
     @Schema(description = "브랜드 ID", example = "1")
     val brandId: Long,
-    @Schema(description = "카테고리", example = "상의")
+    @Schema(description = "카테고리", example = "TOP")
     val category: String,
     @Schema(description = "가격", example = "1000")
     val price: Long,

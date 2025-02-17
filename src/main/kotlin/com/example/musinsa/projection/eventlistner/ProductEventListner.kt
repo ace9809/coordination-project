@@ -22,6 +22,8 @@ class ProductEventListener(
     private val productBrandStatisticDomainService: ProductBrandStatisticDomainService,
     private val brandDomainService: BrandDomainService
 ) {
+
+    // TODO: 테스트 코드 추가 및 Opensearch 같은 검색엔진 도입
     @Async
     @TransactionalEventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -51,20 +53,22 @@ class ProductEventListener(
         val productCategoryStatistic = productCategoryStatisticDomainService.getProductStatistic(category)
 
         if (productCategoryStatistic == null) {
-            ProductCategoryStatisticDto(
-                category = category,
-                minBrandId = productDto.brandId,
-                minProductId = productDto.id,
-                minPrice = productDto.price,
-                maxBrandId = productDto.brandId,
-                maxPrice = productDto.price,
-                maxProductId = productDto.id
+            productCategoryStatisticDomainService.save(
+                ProductCategoryStatisticDto(
+                    category = category,
+                    minBrandId = productDto.brandId,
+                    minProductId = productDto.id,
+                    minPrice = productDto.price,
+                    maxBrandId = productDto.brandId,
+                    maxPrice = productDto.price,
+                    maxProductId = productDto.id
+                )
             )
             return
         }
 
-        if (productCategoryStatistic.minProductId == productDto.id || productCategoryStatistic.maxProductId == productDto.id) {
-            if (productDto.price < productCategoryStatistic.minPrice) {
+        if (productDto.price < productCategoryStatistic.minPrice) {
+            productCategoryStatisticDomainService.save(
                 ProductCategoryStatisticDto(
                     id = productCategoryStatistic.id,
                     category = productCategoryStatistic.category,
@@ -75,9 +79,11 @@ class ProductEventListener(
                     maxPrice = productCategoryStatistic.maxPrice,
                     maxProductId = productCategoryStatistic.maxProductId
                 )
-            }
+            )
+        }
 
-            if (productDto.price > productCategoryStatistic.maxPrice) {
+        if (productDto.price > productCategoryStatistic.maxPrice) {
+            productCategoryStatisticDomainService.save(
                 ProductCategoryStatisticDto(
                     id = productCategoryStatistic.id,
                     category = productCategoryStatistic.category,
@@ -88,7 +94,7 @@ class ProductEventListener(
                     maxPrice = productDto.price,
                     maxProductId = productDto.id
                 )
-            }
+            )
         }
     }
 
@@ -97,12 +103,10 @@ class ProductEventListener(
         val productCategoryStatistic = productCategoryStatisticDomainService.getProductStatistic(category) ?: return
         val mostExpensiveProduct = productDomainService.getMostExpensiveProductByCategory(category)
         val cheapestProduct = productDomainService.getCheapestProductByCategory(category)
-        // 카테고리에 상품이 존재 하지 않는 경우 통계 삭제
         if (mostExpensiveProduct == null || cheapestProduct == null) {
             productCategoryStatisticDomainService.deleteProductStatistic(productCategoryStatistic.id)
             return
         }
-        // 삭제된 productId로 통계 데이터가 있는 경우 통계 업데이트
         if (productCategoryStatistic.minProductId == productDto.id || productCategoryStatistic.maxProductId == productDto.id) {
             productCategoryStatisticDomainService.save(
                 ProductCategoryStatisticDto(

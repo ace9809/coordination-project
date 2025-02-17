@@ -23,7 +23,7 @@ class ProductController(
     }
 
     @Operation(summary = "최저가 브랜드의 모든 카테고리 상품 가격 및 총액 조회 API")
-    @DeleteMapping("/min-total-price-brand")
+    @GetMapping("/min-total-price-brand")
     fun getMinTotalPriceBrand(): Response<GetMinTotalPriceBrandResponses> {
         return Response(true, productService.getMinTotalPriceBrand())
     }
@@ -31,7 +31,7 @@ class ProductController(
     @Operation(summary = "특정 카테고리 최저, 최고 가격 브랜드의 상품 조회 API")
     @GetMapping("/min-max-price")
     fun getMinMaxPrice(
-        @RequestParam category: CategoryType,
+        @RequestParam category: String,
     ): Response<GetMinMaxPriceResponses> {
         return Response(true, productService.getMinMaxPrice(category))
     }
