@@ -1,6 +1,7 @@
 package com.example.musinsa.domain
 
 import com.example.musinsa.model.dto.ProductBrandStatisticDto
+import com.example.musinsa.model.dto.ProductCategoryStatisticDto
 import com.example.musinsa.projection.entity.ProductBrandStatistic
 import com.example.musinsa.projection.repository.ProductBrandStatisticRepository
 import org.springframework.stereotype.Service
@@ -17,5 +18,9 @@ class ProductBrandStatisticDomainService(
     fun getTopByOrderByTotalPriceAsc(): ProductBrandStatisticDto? {
         val productBrandStatistics = productBrandStatisticRepository.findTopByOrderByTotalPriceAsc() ?: return null
         return ProductBrandStatisticDto.of(productBrandStatistics)
+    }
+
+    fun save(productBrandStatisticDto: ProductBrandStatisticDto): ProductBrandStatisticDto {
+        return ProductBrandStatisticDto.of(productBrandStatisticRepository.save(productBrandStatisticDto.toProductStatistics()))
     }
 }

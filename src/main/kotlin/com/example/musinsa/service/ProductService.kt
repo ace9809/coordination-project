@@ -11,7 +11,6 @@ import com.example.musinsa.model.dto.request.product.UpdateProductRequest
 import com.example.musinsa.model.dto.response.product.*
 import com.example.musinsa.model.enums.CategoryType
 import com.example.musinsa.model.enums.ProductEventType
-import com.example.musinsa.projection.entity.ProductBrandStatistic
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,6 +26,7 @@ class ProductService(
     @Transactional(readOnly = true)
     fun getCategoryMinPrices(): GetCategoryMinPricesResponses {
         val productCategoryStatistics = productCategoryStatisticDomainService.getAllProductStatistics()
+        //브랜드 캐싱
         val brandIds = productCategoryStatistics.map { it.minBrandId }
         val brandMap = brandDomainService.getBrandIdIn(brandIds).associateBy { it.id }
         return GetCategoryMinPricesResponses(
