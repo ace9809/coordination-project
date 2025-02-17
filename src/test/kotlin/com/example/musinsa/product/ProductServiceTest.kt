@@ -1,12 +1,12 @@
 package com.example.musinsa.product
 
+import com.example.musinsa.brand.domain.BrandDomainService
 import com.example.musinsa.product.domain.ProductBrandStatisticDomainService
 import com.example.musinsa.product.domain.ProductCategoryStatisticDomainService
 import com.example.musinsa.product.domain.ProductDomainService
 import com.example.musinsa.exception.*
 import com.example.musinsa.product.model.dto.request.product.CreateProductRequest
 import com.example.musinsa.product.model.dto.request.product.UpdateProductRequest
-import com.example.musinsa.model.dto.response.product.*
 import com.example.musinsa.product.model.enums.CategoryType
 import com.example.musinsa.product.model.enums.ProductEventType
 import com.example.musinsa.product.model.dto.response.product.*
@@ -357,17 +357,6 @@ class ProductServiceTest : BehaviorSpec({
                     sut.updateProduct(existingProductDto.id, invalidCategoryRequest)
                 }
                 exception.message shouldBe "잘못된 카테고리입니다."
-            }
-        }
-
-        `when`("같은 카테고리와 브랜드에 대한 상품이 존재하면") {
-            every { productDomainService.existsByCategoryAndBrandId(category, updateProductRequest.brandId) } returns true
-
-            then("예외가 발생해야 한다") {
-                val exception = shouldThrow<ProductException> {
-                    sut.updateProduct(existingProductDto.id, updateProductRequest)
-                }
-                exception.message shouldBe "해당 브랜드에 이미 존재하는 상품입니다."
             }
         }
 

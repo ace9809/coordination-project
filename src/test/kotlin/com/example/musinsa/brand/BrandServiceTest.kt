@@ -1,11 +1,13 @@
 package com.example.musinsa.brand
 
-import com.example.musinsa.exception.BrandException
+import com.example.musinsa.brand.domain.BrandDomainService
 import com.example.musinsa.brand.model.dto.request.brand.CreateBrandRequest
 import com.example.musinsa.brand.model.dto.request.brand.UpdateBrandRequest
 import com.example.musinsa.brand.model.dto.response.brand.CreateBrandResponse
+import com.example.musinsa.brand.model.dto.response.brand.DeleteBrandResponse
 import com.example.musinsa.brand.model.dto.response.brand.UpdateBrandResponse
-import com.example.musinsa.product.model.dto.response.product.DeleteProductResponse
+import com.example.musinsa.brand.service.BrandService
+import com.example.musinsa.exception.BrandException
 import com.example.musinsa.testFixtures.BrandFixture
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode
@@ -101,7 +103,7 @@ class BrandServiceTest : BehaviorSpec({
         `when`("브랜드 삭제를 요청하면") {
             val response = sut.deleteBrand(brandId)
             then("정상적으로 삭제되어야 한다.") {
-                response shouldBe DeleteProductResponse(productId = brandId)
+                response shouldBe DeleteBrandResponse(brandId = brandId)
             }
         }
 
