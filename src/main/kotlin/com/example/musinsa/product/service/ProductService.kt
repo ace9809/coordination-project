@@ -133,10 +133,6 @@ class ProductService(
         val categoryType = CategoryType.entries.find { it.name == updateProductRequest.category }
             ?: throw ProductException(ProductError.INVALID_CATEGORY_EXCEPTION)
 
-        val existsProduct =
-            productDomainService.existsByCategoryAndBrandId(categoryType, updateProductRequest.brandId)
-        if (existsProduct) throw ProductException(ProductError.DUPLICATE_PRODUCT_EXCEPTION)
-
         val brand = brandDomainService.getBrand(updateProductRequest.brandId)
             ?: throw BrandException(BrandError.NOT_FOUND_BRAND_EXCEPTION)
 
