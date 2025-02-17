@@ -11,6 +11,7 @@ import com.example.musinsa.model.dto.ProductEventDto
 import com.example.musinsa.model.enums.ProductEventType
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.event.TransactionalEventListener
 
@@ -23,8 +24,8 @@ class ProductEventListener(
 ) {
     @Async
     @TransactionalEventListener
-    @Transactional
-    fun handleProductUpdate(event: ProductEventDto) {g
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    fun handleProductUpdate(event: ProductEventDto) {
         val productDto = event.product
         brandDomainService.getBrand(productDto.brandId) ?: return
 

@@ -16,7 +16,7 @@ class BrandDomainService(
     }
 
     fun getBrandIdIn(brandIds: List<Long>) : List<BrandDto> {
-        val brands = brandRepository.findBrandIdIn(brandIds)
+        val brands = brandRepository.findByIdIn(brandIds)
         return brands.map { BrandDto.of(it) }
     }
 

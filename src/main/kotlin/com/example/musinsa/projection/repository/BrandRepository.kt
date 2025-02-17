@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository
 interface BrandRepository: JpaRepository<Brand, Long> {
     fun existsByName(name: String): Boolean
 
-    fun findBrandIdIn(brandIds: List<Long>): List<Brand>
+    fun findByIdIn(brandIds: List<Long>): List<Brand>
 }
