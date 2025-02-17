@@ -20,20 +20,19 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
-	runtimeOnly("com.h2database:h2")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	implementation("org.springframework.boot:spring-boot-starter-cache")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.4.2")
+	implementation("org.springframework.boot:spring-boot-starter-web:3.4.2")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2")
+	implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
+	runtimeOnly("com.h2database:h2:2.3.232")
+	testImplementation("org.springframework.boot:spring-boot-starter-test:3.4.2")
+	implementation("org.springframework.boot:spring-boot-starter-cache:3.4.2")
 	implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
-	testImplementation("io.kotest:kotest-runner-junit5:5.3.2")
-	testImplementation("io.kotest:kotest-assertions-core:5.3.2")
-	testImplementation("io.mockk:mockk:1.12.0")
+	testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
+	testImplementation("io.kotest:kotest-assertions-core:5.9.1")
+	testImplementation("io.mockk:mockk:1.13.16")
 	testImplementation("com.appmattus.fixture:fixture:1.2.0")
-
 }
 
 kotlin {
