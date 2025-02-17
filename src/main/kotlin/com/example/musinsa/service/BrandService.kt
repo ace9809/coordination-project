@@ -37,6 +37,7 @@ class BrandService(
         )
     }
 
+    // TODO: 브랜드 삭제시 상품 삭제 및 배치 추가
     @Transactional
     fun deleteBrand(brandId: Long): DeleteProductResponse {
         val brand = brandDomainService.getBrand(brandId) ?: throw BrandException(BrandError.NOT_FOUND_BRAND_EXCEPTION)
