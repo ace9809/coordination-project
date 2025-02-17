@@ -1,16 +1,16 @@
 package com.example.musinsa.product
 
-import com.example.musinsa.domain.BrandDomainService
-import com.example.musinsa.domain.ProductBrandStatisticDomainService
-import com.example.musinsa.domain.ProductCategoryStatisticDomainService
-import com.example.musinsa.domain.ProductDomainService
+import com.example.musinsa.product.domain.ProductBrandStatisticDomainService
+import com.example.musinsa.product.domain.ProductCategoryStatisticDomainService
+import com.example.musinsa.product.domain.ProductDomainService
 import com.example.musinsa.exception.*
-import com.example.musinsa.model.dto.request.product.CreateProductRequest
-import com.example.musinsa.model.dto.request.product.UpdateProductRequest
+import com.example.musinsa.product.model.dto.request.product.CreateProductRequest
+import com.example.musinsa.product.model.dto.request.product.UpdateProductRequest
 import com.example.musinsa.model.dto.response.product.*
-import com.example.musinsa.model.enums.CategoryType
-import com.example.musinsa.model.enums.ProductEventType
-import com.example.musinsa.service.ProductService
+import com.example.musinsa.product.model.enums.CategoryType
+import com.example.musinsa.product.model.enums.ProductEventType
+import com.example.musinsa.product.model.dto.response.product.*
+import com.example.musinsa.product.service.ProductService
 import com.example.musinsa.testFixtures.*
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode

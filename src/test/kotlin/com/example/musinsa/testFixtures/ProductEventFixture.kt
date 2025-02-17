@@ -1,8 +1,8 @@
 package com.example.musinsa.testFixtures
 
-import com.example.musinsa.model.dto.ProductDto
-import com.example.musinsa.model.dto.ProductEventDto
-import com.example.musinsa.model.enums.ProductEventType
+import com.example.musinsa.product.model.dto.ProductDto
+import com.example.musinsa.product.model.dto.ProductEventDto
+import com.example.musinsa.product.model.enums.ProductEventType
 import com.example.musinsa.testFixtures.Fixture.fixture
 
 class ProductEventFixture {

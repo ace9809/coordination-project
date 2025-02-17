@@ -1,13 +1,11 @@
 package com.example.musinsa.brand
 
-import com.example.musinsa.domain.BrandDomainService
 import com.example.musinsa.exception.BrandException
-import com.example.musinsa.model.dto.request.brand.CreateBrandRequest
-import com.example.musinsa.model.dto.request.brand.UpdateBrandRequest
-import com.example.musinsa.model.dto.response.brand.CreateBrandResponse
-import com.example.musinsa.model.dto.response.brand.UpdateBrandResponse
-import com.example.musinsa.model.dto.response.product.DeleteProductResponse
-import com.example.musinsa.service.BrandService
+import com.example.musinsa.brand.model.dto.request.brand.CreateBrandRequest
+import com.example.musinsa.brand.model.dto.request.brand.UpdateBrandRequest
+import com.example.musinsa.brand.model.dto.response.brand.CreateBrandResponse
+import com.example.musinsa.brand.model.dto.response.brand.UpdateBrandResponse
+import com.example.musinsa.product.model.dto.response.product.DeleteProductResponse
 import com.example.musinsa.testFixtures.BrandFixture
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode

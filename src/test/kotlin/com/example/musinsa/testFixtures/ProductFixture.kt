@@ -1,7 +1,7 @@
 package com.example.musinsa.testFixtures
 
-import com.example.musinsa.model.dto.ProductDto
-import com.example.musinsa.model.enums.CategoryType
+import com.example.musinsa.product.model.dto.ProductDto
+import com.example.musinsa.product.model.enums.CategoryType
 import com.example.musinsa.testFixtures.Fixture.fixture
 import org.mockito.ArgumentMatchers.anyLong
 

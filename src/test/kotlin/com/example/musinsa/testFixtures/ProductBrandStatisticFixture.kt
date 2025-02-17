@@ -1,6 +1,6 @@
 package com.example.musinsa.testFixtures
 
-import com.example.musinsa.model.dto.ProductBrandStatisticDto
+import com.example.musinsa.product.model.dto.ProductBrandStatisticDto
 import org.mockito.ArgumentMatchers.anyLong
 
 class ProductBrandStatisticFixture {
