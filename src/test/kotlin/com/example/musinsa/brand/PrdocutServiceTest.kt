@@ -18,7 +18,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 
-class BrandServiceTest : BehaviorSpec({
+class PrdocutServiceTest : BehaviorSpec({
 
     isolationMode = IsolationMode.InstancePerLeaf
 
