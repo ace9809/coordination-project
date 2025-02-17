@@ -15,6 +15,11 @@ class ProductDomainService(
         return ProductDto.of(product)
     }
 
+    fun getAllByBrandId(brandId: Long): List<ProductDto> {
+        val products = productRepository.findAllByBrandId(brandId)
+        return products.map { ProductDto.of(it) }
+    }
+
     fun save(productDto: ProductDto): ProductDto {
         return ProductDto.of(productRepository.save(productDto.toProduct()))
     }

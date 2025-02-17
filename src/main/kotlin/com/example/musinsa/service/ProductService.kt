@@ -1,8 +1,9 @@
 package com.example.musinsa.service
 
 import com.example.musinsa.domain.BrandDomainService
-import com.example.musinsa.domain.ProductDomainService
+import com.example.musinsa.domain.ProductBrandStatisticDomainService
 import com.example.musinsa.domain.ProductCategoryStatisticDomainService
+import com.example.musinsa.domain.ProductDomainService
 import com.example.musinsa.exception.*
 import com.example.musinsa.model.dto.ProductEventDto
 import com.example.musinsa.model.dto.request.product.CreateProductRequest
@@ -10,6 +11,7 @@ import com.example.musinsa.model.dto.request.product.UpdateProductRequest
 import com.example.musinsa.model.dto.response.product.*
 import com.example.musinsa.model.enums.CategoryType
 import com.example.musinsa.model.enums.ProductEventType
+import com.example.musinsa.projection.entity.ProductBrandStatistic
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,24 +20,51 @@ import org.springframework.transaction.annotation.Transactional
 class ProductService(
     private val productDomainService: ProductDomainService,
     private val productCategoryStatisticDomainService: ProductCategoryStatisticDomainService,
+    private val productBrandStatisticDomainService: ProductBrandStatisticDomainService,
     private val brandDomainService: BrandDomainService,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
     @Transactional(readOnly = true)
-    fun getCategoryLowesPrices(): GetCategoryLowesPricesResponses {
-        val productStatistics = productCategoryStatisticDomainService.getAllProductStatistics()
-        val brandIds = productStatistics.map { it.minBrandId }
+    fun getCategoryMinPrices(): GetCategoryMinPricesResponses {
+        val productCategoryStatistics = productCategoryStatisticDomainService.getAllProductStatistics()
+        val brandIds = productCategoryStatistics.map { it.minBrandId }
         val brandMap = brandDomainService.getBrandIdIn(brandIds).associateBy { it.id }
-        return GetCategoryLowesPricesResponses(
-            products = productStatistics.map {
-                GetCategoryLowesPricesResponse(
+        return GetCategoryMinPricesResponses(
+            products = productCategoryStatistics.map {
+                GetCategoryMinPricesResponse(
                     brandId = it.minBrandId,
                     brandName = brandMap[it.minBrandId]!!.name,
                     category = it.category,
                     price = it.minPrice
                 )
             },
-            totalPrice = productStatistics.sumOf { it.minPrice }
+            totalPrice = productCategoryStatistics.sumOf { it.minPrice }
+        )
+    }
+
+    @Transactional(readOnly = true)
+    fun getMinTotalPriceBrand(): GetMinTotalPriceBrandResponses {
+        val productBrandStatistic =
+            productBrandStatisticDomainService.getTopByOrderByTotalPriceAsc() ?: throw ProductBrandStatisticException(
+                ProductBrandStatisticError.NOT_FOUND_PRODUCT_BRAND_STATISTICS_EXCEPTION
+            )
+        val minPriceBrandId = productBrandStatistic.brandId
+        val products = productDomainService.getAllByBrandId(minPriceBrandId)
+        val totalPrice = products.sumOf { it.price }
+        val brand = brandDomainService.getBrand(minPriceBrandId)
+            ?: throw BrandException(BrandError.NOT_FOUND_BRAND_EXCEPTION)
+
+        return GetMinTotalPriceBrandResponses(
+            products = GetMinTotalPriceBrandResponse(
+                brandName = brand.name,
+                categories = products.map {
+                    GetCategoriesResponse(
+                        category = it.category,
+                        price = it.price
+                    )
+                },
+                totalPrice = totalPrice
+            )
         )
     }
 
@@ -43,22 +72,23 @@ class ProductService(
     fun getMinMaxPrice(category: CategoryType): GetMinMaxPriceResponses {
         CategoryType.fromDisplayName(category.displayName)
             ?: throw ProductException(ProductError.INVALID_CATEGORY_EXCEPTION)
-        val productStatistics =
-            productCategoryStatisticDomainService.getProductStatistics(category) ?: throw ProductCategoryStatisticException(
-                ProductCategoryStatisticError.NOT_FOUND_PRODUCT_STATISTICS_EXCEPTION
-            )
-        val brandIds = listOf(productStatistics.minBrandId, productStatistics.maxBrandId)
+        val productStatistic =
+            productCategoryStatisticDomainService.getProductStatistic(category)
+                ?: throw ProductCategoryStatisticException(
+                    ProductCategoryStatisticError.NOT_FOUND_PRODUCT_CATEGORY_STATISTICS_EXCEPTION
+                )
+        val brandIds = listOf(productStatistic.minBrandId, productStatistic.maxBrandId)
         val brandMap = brandDomainService.getBrandIdIn(brandIds).associateBy { it.id }
 
         return GetMinMaxPriceResponses(
-            category = productStatistics.category,
+            category = productStatistic.category,
             minProduct = GetMinMaxPriceResponse(
-                brandName = brandMap[productStatistics.minBrandId]!!.name,
-                price = productStatistics.minPrice
+                brandName = brandMap[productStatistic.minBrandId]!!.name,
+                price = productStatistic.minPrice
             ),
             maxProduct = GetMinMaxPriceResponse(
-                brandName = brandMap[productStatistics.minBrandId]!!.name,
-                price = productStatistics.minPrice
+                brandName = brandMap[productStatistic.minBrandId]!!.name,
+                price = productStatistic.minPrice
             )
         )
     }

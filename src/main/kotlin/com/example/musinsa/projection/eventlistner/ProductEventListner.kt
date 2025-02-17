@@ -1,12 +1,15 @@
 package com.example.musinsa.projection.eventlistner
 
 import com.example.musinsa.domain.BrandDomainService
+import com.example.musinsa.domain.ProductBrandStatisticDomainService
 import com.example.musinsa.domain.ProductDomainService
 import com.example.musinsa.domain.ProductCategoryStatisticDomainService
+import com.example.musinsa.model.dto.ProductBrandStatisticDto
 import com.example.musinsa.model.dto.ProductDto
 import com.example.musinsa.model.dto.ProductEventDto
 import com.example.musinsa.model.dto.ProductCategoryStatisticDto
 import com.example.musinsa.model.enums.ProductEventType
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.event.TransactionalEventListener
@@ -15,8 +18,10 @@ import org.springframework.transaction.event.TransactionalEventListener
 class ProductEventListener(
     private val productCategoryStatisticDomainService: ProductCategoryStatisticDomainService,
     private val productDomainService: ProductDomainService,
+    private val productBrandStatisticDomainService: ProductBrandStatisticDomainService,
     private val brandDomainService: BrandDomainService
 ) {
+    @Async
     @TransactionalEventListener
     @Transactional
     fun handleProductUpdate(event: ProductEventDto) {
@@ -24,10 +29,21 @@ class ProductEventListener(
         brandDomainService.getBrand(productDto.brandId) ?: return
 
         when (event.type) {
-            ProductEventType.CREATE, ProductEventType.UPDATE -> updateCategoryStatistic(productDto)
-            ProductEventType.DELETE -> deleteCategoryStatistic(productDto)
+            ProductEventType.CREATE, ProductEventType.UPDATE -> updateStatistic(productDto)
+            ProductEventType.DELETE -> deleteStatistic(productDto)
         }
     }
+
+    private fun updateStatistic(productDto: ProductDto) {
+        updateCategoryStatistic(productDto)
+        updateBrandStatistic(productDto)
+    }
+
+    private fun deleteStatistic(productDto: ProductDto) {
+        deleteCategoryStatistic(productDto)
+        updateBrandStatistic(productDto)
+    }
+
 
     private fun updateCategoryStatistic(productDto: ProductDto) {
         val category = productDto.category
@@ -98,6 +114,26 @@ class ProductEventListener(
                     maxPrice = mostExpensiveProduct.price,
                     maxProductId = mostExpensiveProduct.id
                 )
+            )
+        }
+    }
+
+    private fun updateBrandStatistic(productDto: ProductDto) {
+        val brandId = productDto.brandId
+        val productBrandStatistic = productBrandStatisticDomainService.getByBrandId(brandId)
+        val products = productDomainService.getAllByBrandId(brandId)
+        val totalPrice = products.sumOf { it.price }
+
+        if (productBrandStatistic == null) {
+            ProductBrandStatisticDto(
+                brandId = brandId,
+                totalPrice = totalPrice,
+            )
+        } else {
+            ProductBrandStatisticDto(
+                id = brandId,
+                brandId = brandId,
+                totalPrice = totalPrice,
             )
         }
     }

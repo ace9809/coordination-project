@@ -12,4 +12,6 @@ interface ProductRepository: JpaRepository<Product, Long> {
     fun findTopByCategoryOrderByPriceDesc(category: CategoryType): Product?
 
     fun findTopByCategoryOrderByPriceAsc(category: CategoryType): Product?
+
+    fun findAllByBrandId(brandId: Long): List<Product>
 }

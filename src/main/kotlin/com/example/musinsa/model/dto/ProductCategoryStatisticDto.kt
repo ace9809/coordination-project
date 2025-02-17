@@ -1,7 +1,7 @@
 package com.example.musinsa.model.dto
 
 import com.example.musinsa.model.enums.CategoryType
-import com.example.musinsa.projection.entity.ProductStatistics
+import com.example.musinsa.projection.entity.ProductCategoryStatistic
 
 data class ProductCategoryStatisticDto(
     val id: Long = 0L,
@@ -14,22 +14,22 @@ data class ProductCategoryStatisticDto(
     val maxPrice: Long
 ) {
     companion object {
-        fun of(productStatistics: ProductStatistics): ProductCategoryStatisticDto {
+        fun of(productCategoryStatistic: ProductCategoryStatistic): ProductCategoryStatisticDto {
             return ProductCategoryStatisticDto(
-                id = productStatistics.id,
-                category = productStatistics.category,
-                minBrandId = productStatistics.minBrandId,
-                minPrice = productStatistics.minPrice,
-                minProductId = productStatistics.minProductId,
-                maxBrandId = productStatistics.maxBrandId,
-                maxPrice = productStatistics.maxPrice,
-                maxProductId = productStatistics.maxProductId
+                id = productCategoryStatistic.id,
+                category = productCategoryStatistic.category,
+                minBrandId = productCategoryStatistic.minBrandId,
+                minPrice = productCategoryStatistic.minPrice,
+                minProductId = productCategoryStatistic.minProductId,
+                maxBrandId = productCategoryStatistic.maxBrandId,
+                maxPrice = productCategoryStatistic.maxPrice,
+                maxProductId = productCategoryStatistic.maxProductId
             )
         }
     }
 
-    fun toProductStatistics(): ProductStatistics {
-        return ProductStatistics(
+    fun toProductStatistics(): ProductCategoryStatistic {
+        return ProductCategoryStatistic(
             id = id,
             category = category,
             minBrandId = minBrandId,

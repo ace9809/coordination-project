@@ -17,15 +17,16 @@ class ProductController(
     private val productService: ProductService
 ) {
     @Operation(summary = "카테고리별 최저가격 브랜드의 상품 조회 API")
-    @GetMapping("/category-lowest-prices")
-    fun getCategoryLowesPrices(): Response<GetCategoryLowesPricesResponses> {
-        return Response(true, productService.getCategoryLowesPrices())
+    @GetMapping("/category-min-prices")
+    fun getCategoryMinPrices(): Response<GetCategoryMinPricesResponses> {
+        return Response(true, productService.getCategoryMinPrices())
     }
 
-//    @Operation(summary = "최저가 브랜드의 모든 카테고리 상품 가격 및 총액 조회 API")
-//    @DeleteMapping("/brands/lowest-total")
-//    fun getBrandWitLowestTotal()
-//
+    @Operation(summary = "최저가 브랜드의 모든 카테고리 상품 가격 및 총액 조회 API")
+    @DeleteMapping("/min-total-price-brand")
+    fun getMinTotalPriceBrand(): Response<GetMinTotalPriceBrandResponses> {
+        return Response(true, productService.getMinTotalPriceBrand())
+    }
 
     @Operation(summary = "특정 카테고리 최저, 최고 가격 브랜드의 상품 조회 API")
     @GetMapping("/min-max-price")
