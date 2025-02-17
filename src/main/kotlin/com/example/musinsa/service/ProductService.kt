@@ -26,7 +26,6 @@ class ProductService(
     @Transactional(readOnly = true)
     fun getCategoryMinPrices(): GetCategoryMinPricesResponses {
         val productCategoryStatistics = productCategoryStatisticDomainService.getAllProductStatistics()
-        //브랜드 캐싱
         val brandIds = productCategoryStatistics.map { it.minBrandId }
         val brandMap = brandDomainService.getBrandIdIn(brandIds).associateBy { it.id }
         return GetCategoryMinPricesResponses(
@@ -87,8 +86,8 @@ class ProductService(
                 price = productStatistic.minPrice
             ),
             maxProduct = GetMinMaxPriceResponse(
-                brandName = brandMap[productStatistic.minBrandId]!!.name,
-                price = productStatistic.minPrice
+                brandName = brandMap[productStatistic.maxBrandId]!!.name,
+                price = productStatistic.maxPrice
             )
         )
     }
@@ -99,16 +98,16 @@ class ProductService(
             throw ProductException(ProductError.INVALID_PRICE_EXCEPTION)
         }
 
-        CategoryType.fromDisplayName(createProductRequest.category.displayName)
+        val category = CategoryType.fromDisplayName(createProductRequest.category)
             ?: throw ProductException(ProductError.INVALID_CATEGORY_EXCEPTION)
 
         val existsProduct =
-            productDomainService.existsByCategoryAndBrandId(createProductRequest.category, createProductRequest.brandId)
+            productDomainService.existsByCategoryAndBrandId(category, createProductRequest.brandId)
         if (existsProduct) throw ProductException(ProductError.DUPLICATE_PRODUCT_EXCEPTION)
 
         val brand = brandDomainService.getBrand(createProductRequest.brandId)
             ?: throw BrandException(BrandError.NOT_FOUND_BRAND_EXCEPTION)
-        val product = productDomainService.save(createProductRequest.toProductDto())
+        val product = productDomainService.save(createProductRequest.toProductDto(category))
 
         applicationEventPublisher.publishEvent(ProductEventDto(product, ProductEventType.CREATE))
 
@@ -128,17 +127,18 @@ class ProductService(
             throw ProductException(ProductError.INVALID_PRICE_EXCEPTION)
         }
 
-        CategoryType.fromDisplayName(updateProductRequest.category.displayName)
+        val category = CategoryType.fromDisplayName(updateProductRequest.category)
             ?: throw ProductException(ProductError.INVALID_CATEGORY_EXCEPTION)
 
         val existsProduct =
-            productDomainService.existsByCategoryAndBrandId(updateProductRequest.category, updateProductRequest.brandId)
+            productDomainService.existsByCategoryAndBrandId(category, updateProductRequest.brandId)
         if (existsProduct) throw ProductException(ProductError.DUPLICATE_PRODUCT_EXCEPTION)
 
         val brand = brandDomainService.getBrand(updateProductRequest.brandId)
             ?: throw BrandException(BrandError.NOT_FOUND_BRAND_EXCEPTION)
 
-        val updateProduct = productDomainService.save(updateProductRequest.toProductDto(productId))
+        val updateProduct = productDomainService.save(updateProductRequest.toProductDto(productId, category))
+        applicationEventPublisher.publishEvent(ProductEventDto(updateProduct, ProductEventType.UPDATE))
         return UpdateProductResponse(
             id = updateProduct.id,
             brandId = brand.id,
@@ -152,6 +152,8 @@ class ProductService(
         val product = productDomainService.getProduct(productId)
             ?: throw ProductException(ProductError.NOT_FOUND_PRODUCT_EXCEPTION)
         val deleteProductId = productDomainService.deleteProduct(product.id)
+
+        applicationEventPublisher.publishEvent(ProductEventDto(product, ProductEventType.DELETE))
         return DeleteProductResponse(
             productId = deleteProductId
         )
