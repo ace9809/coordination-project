@@ -130,21 +130,11 @@ class ProductService(
             throw ProductException(ProductError.INVALID_PRICE_EXCEPTION)
         }
 
-        val categoryType = CategoryType.entries.find { it.name == updateProductRequest.category }
-            ?: throw ProductException(ProductError.INVALID_CATEGORY_EXCEPTION)
-
-        val existsProduct =
-            productDomainService.existsByCategoryAndBrandId(categoryType, updateProductRequest.brandId)
-        if (existsProduct) throw ProductException(ProductError.DUPLICATE_PRODUCT_EXCEPTION)
-
-        val brand = brandDomainService.getBrand(updateProductRequest.brandId)
-            ?: throw BrandException(BrandError.NOT_FOUND_BRAND_EXCEPTION)
-
-        val updateProduct = productDomainService.save(updateProductRequest.toProductDto(productId, categoryType))
+        val updateProduct = productDomainService.save(updateProductRequest.toProductDto(productId, prevProduct.brandId, prevProduct.category))
         applicationEventPublisher.publishEvent(ProductEventDto(updateProduct, prevProduct, ProductEventType.UPDATE))
         return UpdateProductResponse(
             id = updateProduct.id,
-            brandId = brand.id,
+            brandId = updateProduct.brandId,
             category = updateProduct.category,
             price = updateProduct.price
         )

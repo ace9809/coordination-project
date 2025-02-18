@@ -310,13 +310,11 @@ class ProductServiceTest : BehaviorSpec({
         val brandDto = BrandFixture.generate(id = 1, name = "A")
         val category = CategoryType.TOP
         val existingProductDto = ProductFixture.generate(id = 1, category = category, brandId = brandDto.id, price = 5000)
-        val updateProductRequest = UpdateProductRequest(category = category.name, brandId = brandDto.id, price = 6000)
-        val updatedProductDto = existingProductDto.copy(price = 6000)
+        val updateProductRequest = UpdateProductRequest(price = 6000)
+        val updatedProductDto = existingProductDto.copy(price = updateProductRequest.price)
         val productEventDto = ProductEventFixture.generate(updatedProductDto, existingProductDto, ProductEventType.UPDATE)
 
         every { productDomainService.getProduct(existingProductDto.id) } returns existingProductDto
-        every { productDomainService.existsByCategoryAndBrandId(category, updateProductRequest.brandId) } returns false
-        every { brandDomainService.getBrand(updateProductRequest.brandId) } returns brandDto
         every { productDomainService.save(updatedProductDto) } returns updatedProductDto
         every { applicationEventPublisher.publishEvent(productEventDto) } returns Unit
 
@@ -349,28 +347,6 @@ class ProductServiceTest : BehaviorSpec({
             }
         }
 
-        `when`("같은 카테고리와 브랜드에 대한 상품이 존재하면") {
-            every { productDomainService.existsByCategoryAndBrandId(category, updateProductRequest.brandId) } returns true
-
-            then("예외가 발생해야 한다") {
-                val exception = shouldThrow<ProductException> {
-                    sut.updateProduct(existingProductDto.id, updateProductRequest)
-                }
-                exception.message shouldBe "해당 브랜드에 이미 존재하는 상품입니다."
-            }
-        }
-
-        `when`("잘못된 카테고리 정보가 제공되면") {
-            val invalidCategoryRequest = updateProductRequest.copy(category = "INVALID_CATEGORY")
-
-            then("예외가 발생해야 한다") {
-                val exception = shouldThrow<ProductException> {
-                    sut.updateProduct(existingProductDto.id, invalidCategoryRequest)
-                }
-                exception.message shouldBe "잘못된 카테고리입니다."
-            }
-        }
-
         `when`("상품을 찾을 수 없으면") {
             val nonExistentProductId = 999L
             every { productDomainService.getProduct(nonExistentProductId) } returns null
@@ -380,19 +356,6 @@ class ProductServiceTest : BehaviorSpec({
                     sut.updateProduct(nonExistentProductId, updateProductRequest)
                 }
                 exception.message shouldBe "존재하지 않는 상품입니다."
-            }
-        }
-
-        `when`("존재하지 않는 브랜드인 경우") {
-            val notFoundBrandRequest = updateProductRequest.copy(brandId = 9999)
-            every { brandDomainService.getBrand(notFoundBrandRequest.brandId) } returns null
-
-            then("예외가 발생해야 한다") {
-                val exception = shouldThrow<BrandException> {
-                    sut.updateProduct(existingProductDto.id, notFoundBrandRequest)
-                }
-
-                exception.message shouldBe "존재하지 않는 브랜드입니다."
             }
         }
     }

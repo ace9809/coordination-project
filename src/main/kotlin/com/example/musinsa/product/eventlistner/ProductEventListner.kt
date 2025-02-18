@@ -40,7 +40,7 @@ class ProductEventListener(
     }
 
     private fun createStatistic(productDto: ProductDto) {
-        updateCategoryStatistic(productDto)
+        createCategoryStatistic(productDto)
         updateBrandStatistic(productDto)
     }
 
@@ -53,7 +53,7 @@ class ProductEventListener(
 
         // 카테고리 변경 감지
         if (productDto.category != prevProductDto.category) {
-            deleteCategoryStatistic(prevProductDto)
+            updateCategoryStatistic(prevProductDto)
             updateCategoryStatistic(productDto)
         } else {
             updateCategoryStatistic(productDto)
@@ -69,11 +69,11 @@ class ProductEventListener(
     }
 
     private fun deleteStatistic(productDto: ProductDto) {
-        deleteCategoryStatistic(productDto)
+        updateCategoryStatistic(productDto)
         updateBrandStatistic(productDto)
     }
 
-    private fun updateCategoryStatistic(productDto: ProductDto) {
+    private fun createCategoryStatistic(productDto: ProductDto) {
         val category = productDto.category
         val productCategoryStatistic = productCategoryStatisticDomainService.getProductStatistic(category)
 
@@ -123,7 +123,7 @@ class ProductEventListener(
         }
     }
 
-    private fun deleteCategoryStatistic(productDto: ProductDto) {
+    private fun updateCategoryStatistic(productDto: ProductDto) {
         val category = productDto.category
         val productCategoryStatistic = productCategoryStatisticDomainService.getProductStatistic(category) ?: return
         val mostExpensiveProduct = productDomainService.getMostExpensiveProductByCategory(category)
