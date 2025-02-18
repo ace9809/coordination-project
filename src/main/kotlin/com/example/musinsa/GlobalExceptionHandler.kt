@@ -12,7 +12,7 @@ class GlobalExceptionHandler(
 
 ) {
     @ExceptionHandler(value = [MusinsaRuntimeException::class])
-    fun handleKcdRuntimeException(
+    fun handleMusinsaRuntimeException(
         request: HttpServletRequest,
         musinsaRuntimeException: MusinsaRuntimeException
     ): ResponseEntity<Response<Any>> {
