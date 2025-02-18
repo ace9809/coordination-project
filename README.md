@@ -1,6 +1,6 @@
 ## 상품 코디 프로젝트
 
-q
+> 카테고리 및 브랜드의 상품 가격 최저가/최고가 정보 코디 서비스
 
 ## 개발환경
 
@@ -8,10 +8,10 @@ q
 - JDK 21
 - Spring Boot 3.4.2
 - H2 Database
-- Caffeine Cache
+- Caffeine Cacheg
 - Kotest, Mockk, Fixture
 
-## 실행g
+## 실행
 
 ### 프로젝트 빌드
 
