@@ -23,30 +23,54 @@ class ProductEventListener(
     private val brandDomainService: BrandDomainService
 ) {
 
-    // TODO: 테스트 코드 추가 및 Opensearch 같은 검색엔진 도입
     @Async
     @TransactionalEventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun handleProductUpdate(event: ProductEventDto) {
         val productDto = event.product
+        val prevProductDto = event.prevProduct
         brandDomainService.getBrand(productDto.brandId) ?: return
 
         when (event.type) {
-            ProductEventType.CREATE, ProductEventType.UPDATE -> updateStatistic(productDto)
+            ProductEventType.CREATE -> createStatistic(productDto)
+            ProductEventType.UPDATE -> updateStatistic(productDto, prevProductDto)
             ProductEventType.DELETE -> deleteStatistic(productDto)
         }
     }
 
-    private fun updateStatistic(productDto: ProductDto) {
+    private fun createStatistic(productDto: ProductDto) {
         updateCategoryStatistic(productDto)
         updateBrandStatistic(productDto)
+    }
+
+    private fun updateStatistic(productDto: ProductDto, prevProductDto: ProductDto?) {
+        if (prevProductDto == null) {
+            updateCategoryStatistic(productDto)
+            updateBrandStatistic(productDto)
+            return
+        }
+
+        // 카테고리 변경 감지
+        if (productDto.category != prevProductDto.category) {
+            deleteCategoryStatistic(prevProductDto)
+            updateCategoryStatistic(productDto)
+        } else {
+            updateCategoryStatistic(productDto)
+        }
+
+        // 브랜드 변경 감지
+        if (productDto.brandId != prevProductDto.brandId) {
+            updateBrandStatistic(prevProductDto)
+            updateBrandStatistic(productDto)
+        } else {
+            updateBrandStatistic(productDto)
+        }
     }
 
     private fun deleteStatistic(productDto: ProductDto) {
         deleteCategoryStatistic(productDto)
         updateBrandStatistic(productDto)
     }
-
 
     private fun updateCategoryStatistic(productDto: ProductDto) {
         val category = productDto.category
@@ -103,21 +127,23 @@ class ProductEventListener(
         val productCategoryStatistic = productCategoryStatisticDomainService.getProductStatistic(category) ?: return
         val mostExpensiveProduct = productDomainService.getMostExpensiveProductByCategory(category)
         val cheapestProduct = productDomainService.getCheapestProductByCategory(category)
+
         if (mostExpensiveProduct == null || cheapestProduct == null) {
             productCategoryStatisticDomainService.deleteProductStatistic(productCategoryStatistic.id)
             return
         }
+
         if (productCategoryStatistic.minProductId == productDto.id || productCategoryStatistic.maxProductId == productDto.id) {
             productCategoryStatisticDomainService.save(
                 ProductCategoryStatisticDto(
                     id = productCategoryStatistic.id,
                     category = productCategoryStatistic.category,
                     minBrandId = cheapestProduct.brandId,
-                    minPrice = cheapestProduct.price,
                     minProductId = cheapestProduct.id,
+                    minPrice = cheapestProduct.price,
                     maxBrandId = mostExpensiveProduct.brandId,
-                    maxPrice = mostExpensiveProduct.price,
-                    maxProductId = mostExpensiveProduct.id
+                    maxProductId = mostExpensiveProduct.id,
+                    maxPrice = mostExpensiveProduct.price
                 )
             )
         }
@@ -139,8 +165,8 @@ class ProductEventListener(
         } else {
             productBrandStatisticDomainService.save(
                 ProductBrandStatisticDto(
-                    id = brandId,
-                    brandId = brandId,
+                    id = productBrandStatistic.id,
+                    brandId = productBrandStatistic.brandId,
                     totalPrice = totalPrice,
                 )
             )

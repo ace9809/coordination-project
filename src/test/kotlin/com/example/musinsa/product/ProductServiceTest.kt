@@ -234,7 +234,7 @@ class ProductServiceTest : BehaviorSpec({
         val createProductRequest = CreateProductRequest(category = category.name, brandId = brandDto.id, price = 5000)
         val productDto = ProductFixture.generate(category = category, brandId = brandDto.id, price = 5000)
         val createdProductDto = productDto.copy(id = productDto.id)
-        val productEventDto = ProductEventFixture.generate(productDto, ProductEventType.CREATE)
+        val productEventDto = ProductEventFixture.generate(productDto, null, ProductEventType.CREATE)
 
         every { productDomainService.existsByCategoryAndBrandId(category, createProductRequest.brandId) } returns false
         every { brandDomainService.getBrand(createProductRequest.brandId) } returns brandDto
@@ -312,7 +312,7 @@ class ProductServiceTest : BehaviorSpec({
         val existingProductDto = ProductFixture.generate(id = 1, category = category, brandId = brandDto.id, price = 5000)
         val updateProductRequest = UpdateProductRequest(category = category.name, brandId = brandDto.id, price = 6000)
         val updatedProductDto = existingProductDto.copy(price = 6000)
-        val productEventDto = ProductEventFixture.generate(updatedProductDto, ProductEventType.UPDATE)
+        val productEventDto = ProductEventFixture.generate(updatedProductDto, existingProductDto, ProductEventType.UPDATE)
 
         every { productDomainService.getProduct(existingProductDto.id) } returns existingProductDto
         every { productDomainService.existsByCategoryAndBrandId(category, updateProductRequest.brandId) } returns false
@@ -346,6 +346,17 @@ class ProductServiceTest : BehaviorSpec({
                     sut.updateProduct(existingProductDto.id, invalidPriceRequest)
                 }
                 exception.message shouldBe "가격은 0이하로 설정할 수 없습니다."
+            }
+        }
+
+        `when`("같은 카테고리와 브랜드에 대한 상품이 존재하면") {
+            every { productDomainService.existsByCategoryAndBrandId(category, updateProductRequest.brandId) } returns true
+
+            then("예외가 발생해야 한다") {
+                val exception = shouldThrow<ProductException> {
+                    sut.updateProduct(existingProductDto.id, updateProductRequest)
+                }
+                exception.message shouldBe "해당 브랜드에 이미 존재하는 상품입니다."
             }
         }
 
@@ -391,7 +402,7 @@ class ProductServiceTest : BehaviorSpec({
             ProductFixture.generate(id = 1, category = CategoryType.TOP, brandId = 1, price = 5000)
         every { productDomainService.getProduct(productDto.id) } returns productDto
         every { productDomainService.deleteProduct(productDto.id) } returns productDto.id
-        val productEventDto = ProductEventFixture.generate(productDto, ProductEventType.DELETE)
+        val productEventDto = ProductEventFixture.generate(productDto, null, ProductEventType.DELETE)
         every { applicationEventPublisher.publishEvent(productEventDto) } returns Unit
         `when`("삭제 요청을 하면") {
             val response = sut.deleteProduct(productDto.id)

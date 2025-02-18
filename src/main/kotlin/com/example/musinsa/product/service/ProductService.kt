@@ -112,7 +112,7 @@ class ProductService(
             ?: throw BrandException(BrandError.NOT_FOUND_BRAND_EXCEPTION)
         val product = productDomainService.save(createProductRequest.toProductDto(categoryType))
 
-        applicationEventPublisher.publishEvent(ProductEventDto(product, ProductEventType.CREATE))
+        applicationEventPublisher.publishEvent(ProductEventDto(product, null, ProductEventType.CREATE))
 
         return CreateProductResponse(
             id = product.id,
@@ -124,7 +124,7 @@ class ProductService(
 
     @Transactional
     fun updateProduct(productId: Long, updateProductRequest: UpdateProductRequest): UpdateProductResponse {
-        productDomainService.getProduct(productId) ?: throw ProductException(ProductError.NOT_FOUND_PRODUCT_EXCEPTION)
+        val prevProduct = productDomainService.getProduct(productId) ?: throw ProductException(ProductError.NOT_FOUND_PRODUCT_EXCEPTION)
 
         if (updateProductRequest.price < 0) {
             throw ProductException(ProductError.INVALID_PRICE_EXCEPTION)
@@ -133,11 +133,15 @@ class ProductService(
         val categoryType = CategoryType.entries.find { it.name == updateProductRequest.category }
             ?: throw ProductException(ProductError.INVALID_CATEGORY_EXCEPTION)
 
+        val existsProduct =
+            productDomainService.existsByCategoryAndBrandId(categoryType, updateProductRequest.brandId)
+        if (existsProduct) throw ProductException(ProductError.DUPLICATE_PRODUCT_EXCEPTION)
+
         val brand = brandDomainService.getBrand(updateProductRequest.brandId)
             ?: throw BrandException(BrandError.NOT_FOUND_BRAND_EXCEPTION)
 
         val updateProduct = productDomainService.save(updateProductRequest.toProductDto(productId, categoryType))
-        applicationEventPublisher.publishEvent(ProductEventDto(updateProduct, ProductEventType.UPDATE))
+        applicationEventPublisher.publishEvent(ProductEventDto(updateProduct, prevProduct, ProductEventType.UPDATE))
         return UpdateProductResponse(
             id = updateProduct.id,
             brandId = brand.id,
@@ -152,7 +156,7 @@ class ProductService(
             ?: throw ProductException(ProductError.NOT_FOUND_PRODUCT_EXCEPTION)
         val deleteProductId = productDomainService.deleteProduct(product.id)
 
-        applicationEventPublisher.publishEvent(ProductEventDto(product, ProductEventType.DELETE))
+        applicationEventPublisher.publishEvent(ProductEventDto(product, null, ProductEventType.DELETE))
         return DeleteProductResponse(
             productId = deleteProductId
         )

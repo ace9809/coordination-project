@@ -9,9 +9,11 @@ class ProductEventFixture {
     companion object {
         fun generate(
             product: ProductDto = fixture(),
+            prevProduct: ProductDto? = null,
             type: ProductEventType = fixture()
         ) = ProductEventDto(
             product = product,
+            prevProduct = prevProduct,
             type = type
         )
     }
