@@ -36,6 +36,10 @@
 - 스웨거를 통해 API 스펙 확인 및 실행
 - http://localhost:8080/swagger-ui/index.html
 
+## h2 DB 접속
+
+- http://localhost:8080/h2-console
+- `jdbc url: jdbc:h2:mem:test, username: sa`
 
 ## 프로젝트 구현 설명
 
@@ -56,3 +60,63 @@
 
 #### 추후 개선 포인트
 - 추후 서비스가 확장하게 될 경우 Redis 글로벌 캐시 도입 고려
+
+### 테이블 스키마
+
+- 최저가/최고가를 보여주는 서비스다 보니 상품 같은 경우 (카테고리, 가격), (카테고리, 브랜드) 조회가 많이 일어날 거라고 생각해 디비 옵티마이저 계산을 거치지 않기 위해 복합 인덱스로 구현하였습니다.
+
+```sql
+DROP TABLE IF EXISTS product_category_statistics;
+DROP TABLE IF EXISTS product_brand_statistics;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS brands;
+
+CREATE TABLE brands
+(
+  id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name       VARCHAR(25) NOT NULL,
+  created_at DATETIME(6) NULL COMMENT '생성일자',
+  updated_at DATETIME(6) NULL COMMENT '변경일자'
+);
+
+CREATE TABLE products
+(
+  id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+  category   VARCHAR(25) NOT NULL,
+  brand_id   BIGINT       NOT NULL,
+  price      BIGINT       NOT NULL,
+  created_at DATETIME(6) NULL COMMENT '생성일자',
+  updated_at DATETIME(6) NULL COMMENT '변경일자'
+);
+
+CREATE TABLE product_brand_statistics
+(
+  id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+  brand_id    BIGINT NOT NULL,
+  total_price BIGINT NOT NULL,
+  created_at  DATETIME(6) NULL COMMENT '생성일자',
+  updated_at  DATETIME(6) NULL COMMENT '변경일자'
+);
+
+CREATE TABLE product_category_statistics
+(
+  id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+  category       VARCHAR(25) NOT NULL,
+  min_brand_id   BIGINT       NOT NULL,
+  min_product_id BIGINT       NOT NULL,
+  min_price      BIGINT       NOT NULL,
+  max_brand_id   BIGINT       NOT NULL,
+  max_product_id BIGINT       NOT NULL,
+  max_price      BIGINT       NOT NULL,
+  created_at     DATETIME(6) NULL COMMENT '생성일자',
+  updated_at     DATETIME(6) NULL COMMENT '변경일자'
+);
+
+
+CREATE INDEX `index_product_category_statistics_on_category` ON product_category_statistics (`category`);
+CREATE INDEX `index_product_brand_statistics_on_total_price` ON product_brand_statistics (`total_price`);
+CREATE INDEX `index_product_brand_statistics_on_brand_id` ON product_brand_statistics (`brand_id`);
+CREATE INDEX `index_products_on_brand_id` ON products (brand_id);
+CREATE INDEX `index_products_on_category_brand_id` ON products (category, brand_id);
+CREATE INDEX `index_products_on_category_price` ON products (category, price);
+```
